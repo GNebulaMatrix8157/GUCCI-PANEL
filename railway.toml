@@ -1,0 +1,16 @@
+[build]
+  builder = "dockerfile"
+  dockerfilePath = "Dockerfile"
+
+[deploy]
+  restartPolicyType = "always"
+
+[deploy.ports]
+  [deploy.ports.8080]
+    protocol = "tcp"
+  [deploy.ports.2053]
+    protocol = "tcp"
+  [deploy.ports.2550]
+    protocol = "tcp"
+  [deploy.ports.443]
+    protocol = "tcp"

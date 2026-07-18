@@ -1,0 +1,54 @@
+worker_processes auto;
+pid /run/nginx.pid;
+
+events {
+    worker_connections 4096;
+    multi_accept on;
+}
+
+http {
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 10;
+    types_hash_max_size 2048;
+    client_max_body_size 100M;
+
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    server {
+        listen ${PORT} default_server;
+        listen [::]:${PORT} default_server;
+        server_name _;
+
+        # WebSocket & Header Upgrades
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Subscription Links Route (/sub/ & /json/)
+        location /sub/ {
+            proxy_pass http://127.0.0.1:2096/sub/;
+            proxy_buffering off;
+            proxy_read_timeout 300s;
+        }
+
+        location /json/ {
+            proxy_pass http://127.0.0.1:2096/json/;
+            proxy_buffering off;
+            proxy_read_timeout 300s;
+        }
+
+        # Main Web Panel Route
+        location / {
+            proxy_pass http://127.0.0.1:2053/;
+            proxy_buffering off;
+            proxy_read_timeout 300s;
+        }
+    }
+}
