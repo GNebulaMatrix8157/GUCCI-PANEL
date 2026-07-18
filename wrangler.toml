@@ -1,0 +1,9 @@
+name = "thunder-echo-bot"
+main = "worker.js"
+compatibility_date = "2026-07-18"
+
+account_id = "967f2bf6d497d61eac7cb3a87e4e4262"
+
+[[kv_namespaces]]
+binding = "BOT_KV"
+id = "7e6ea225f4984cb790b3ba088becdfe0"
